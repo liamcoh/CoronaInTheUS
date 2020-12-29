@@ -9,6 +9,6 @@ export default React.memo(({ set, list }) => {
     });
 
     return (
-        <select name="States" id="States" onChange={(e) => set(e.target.value)}>{items}</select>
+        <select name="States" id="states" onChange={(e) => set(e.target.value)}>{items}</select>
     )
   })
