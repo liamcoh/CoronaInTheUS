@@ -6,9 +6,15 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.6.0",
+    "@trendmicro/react-dropdown": "^1.4.0",
+    "moment-timezone": "^0.5.32",
+    "rc-dropdown": "^3.2.0",
     "react": "^17.0.1",
+    "react-date-picker": "^8.0.5",
+    "react-datepicker": "^3.3.0",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
+    "react-widgets": "^5.0.0-beta.22",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
