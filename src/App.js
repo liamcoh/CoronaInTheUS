@@ -3,6 +3,7 @@ import StateList from './Components/StatesList'
 import History from './Components/HistoryList'
 import DatePicker from "react-datepicker"
 import './App.css'
+const { max_history, green, red } = require('./config');
 
 function App() {
 
@@ -45,8 +46,8 @@ function App() {
                     let color = 'green'
                     let bold = 'normal'
                     let prec = ele.positiveIncrease / (ele.positiveIncrease + ele.negativeIncrease)
-                    if(prec < (1/25)) color = 'green'
-                    else if (prec >= (1/25) && prec < (1/10)) color = 'orange'
+                    if(prec < green) color = 'green'
+                    else if (prec >= green && prec < red) color = 'orange'
                     else { color = 'red'; bold = 'bold' }
                     tmp.push({
                       name: state.toString(),
@@ -57,7 +58,7 @@ function App() {
                       weight: bold
                     })
 
-                    if(tmp.length > 5) tmp.shift()
+                    if(tmp.length > max_history) tmp.shift()
 
                     return tmp
                   })
