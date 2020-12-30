@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react"
 import StateList from './Components/StatesList'
 import History from './Components/HistoryList'
 import DatePicker from "react-datepicker"
-
+import './App.css'
 
 function App() {
 
@@ -42,11 +42,19 @@ function App() {
 
                   setQueue(prev => {
                     let tmp = [...prev]
+                    let color = 'green'
+                    let bold = 'normal'
+                    let prec = ele.positiveIncrease / (ele.positiveIncrease + ele.negativeIncrease)
+                    if(prec < (1/25)) color = 'green'
+                    else if (prec >= (1/25) && prec < (1/10)) color = 'orange'
+                    else { color = 'red'; bold = 'bold' }
                     tmp.push({
                       name: state.toString(),
                       date: (date.getMonth()+1).toString() + '/' + date.getUTCDate().toString(),
                       pos: ele.positiveIncrease,
-                      neg: ele.negativeIncrease
+                      neg: ele.negativeIncrease,
+                      color: color,
+                      weight: bold
                     })
 
                     if(tmp.length > 5) tmp.shift()
