@@ -3,6 +3,7 @@ import StateList from './Components/StatesList'
 import History from './Components/HistoryList'
 import DatePicker from "react-datepicker"
 import './App.css'
+import toggleIcon from './Assets/print-button.svg'
 const { max_history, green, red } = require('./config');
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
   const [state, setState] = useState('TX')
   const [states, setStates] = useState([])
   const [historyQueue, setQueue] = useState([])
+  const [viewHistory, setViewHistory] = useState(true)
 
   const minDate = new Date(2020, 2, 6)
   var maxDate = new Date()
@@ -69,12 +71,17 @@ function App() {
         })
   }), [date, state]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  function toggleViewHistory() {
+    setViewHistory(!viewHistory)
+  }
 
   return (
       <div>
         <DatePicker selected={date} onChange={setDate} minDate={minDate} maxDate={maxDate} />
         <StateList set={setState} list={states} />
-        <History queue={historyQueue} />
+        <br></br>
+        <button className='button' onClick={toggleViewHistory} style={{ backgroundImage:{toggleIcon} }}><img className='img' src={toggleIcon} alt='view'></img></button>
+        {viewHistory && <History queue={historyQueue} />}
       </div>
   )
 }
