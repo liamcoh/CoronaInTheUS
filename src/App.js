@@ -76,6 +76,7 @@ function App() {
 
   return (
       <div>
+        <div className='title'><h1>הקורונה במדינת ארה"ב</h1></div>
         <DatePicker selected={date} onChange={setDate} minDate={minDate} maxDate={maxDate} />
         <StateList set={setState} list={states} />
         <br></br>

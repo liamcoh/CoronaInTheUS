@@ -8,3 +8,10 @@
     width: 10%;
     height: 10%;
 }
+
+.title {
+    direction: rtl;
+    text-align: center;
+    position: sticky;
+    top: 0;
+}
