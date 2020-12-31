@@ -36,7 +36,6 @@ function App() {
     fetch(`https://api.covidtracking.com/v1/states/${state}/daily.json`)
         .then(response => response.json())
         .then(data => {
-          console.log(data)
           data.forEach(ele => {
             let strDate = ele.date.toString()
             if(parseInt(strDate.substring(0,4)) === date.getFullYear()){ // year
@@ -80,8 +79,8 @@ function App() {
         <DatePicker selected={date} onChange={setDate} minDate={minDate} maxDate={maxDate} />
         <StateList set={setState} list={states} />
         <br></br>
-        <button className='button' onClick={toggleViewHistory} style={{ backgroundImage:{toggleIcon} }}><img className='img' src={toggleIcon} alt='view'></img></button>
-        {viewHistory && <History queue={historyQueue} />}
+        <button className='button' onClick={toggleViewHistory}><img className='img' src={toggleIcon} alt='view'></img></button>
+        {viewHistory && <History queue={historyQueue} addQueue={setQueue} />}
       </div>
   )
 }
