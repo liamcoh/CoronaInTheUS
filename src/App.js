@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react"
 import StateList from './Components/StatesList'
 import History from './Components/HistoryList'
+import ClockBox from './Components/ClockBox'
 import DatePicker from "react-datepicker"
 import './App.css'
 import toggleIcon from './Assets/print-button.svg'
@@ -13,6 +14,8 @@ function App() {
   const [states, setStates] = useState([])
   const [historyQueue, setQueue] = useState([])
   const [viewHistory, setViewHistory] = useState(true)
+  const [clock, setClock] = useState(new Date())
+  const [viewClock, setViewClock] = useState(false)
 
   const minDate = new Date(2020, 2, 6)
   var maxDate = new Date()
@@ -31,11 +34,22 @@ function App() {
         })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Fetch state status on newly aquired input
-  useEffect((() => {
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setClock(new Date());
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    }
+  }, []);
+
+  useEffect(() => { document.body.style.backgroundColor = 'yellow' }, []) // Page color
+
+  function search() {
     fetch(`https://api.covidtracking.com/v1/states/${state}/daily.json`)
         .then(response => response.json())
         .then(data => {
+
           data.forEach(ele => {
             let strDate = ele.date.toString()
             if(parseInt(strDate.substring(0,4)) === date.getFullYear()){ // year
@@ -68,7 +82,7 @@ function App() {
             }
           })
         })
-  }), [date, state]) // eslint-disable-line react-hooks/exhaustive-deps
+  }
 
   function toggleViewHistory() {
     setViewHistory(!viewHistory)
@@ -77,11 +91,18 @@ function App() {
   return (
       <div>
         <div className='title'><h1>הקורונה במדינת ארה"ב</h1></div>
-        <DatePicker selected={date} onChange={setDate} minDate={minDate} maxDate={maxDate} />
-        <StateList set={setState} list={states} />
-        <br></br>
-        <button className='button' onClick={toggleViewHistory}><img className='img' src={toggleIcon} alt='view'></img></button>
-        {viewHistory && <History queue={historyQueue} addQueue={setQueue} />}
+        <div dir='rtl'>
+          <div>
+            <button onClick={() => setViewClock(!viewClock)}>הצג שעה</button>
+            {viewClock && <ClockBox time={clock} />}
+          </div>
+          <div><button onClick={search}>חפש</button></div>
+          <DatePicker selected={date} onChange={setDate} minDate={minDate} maxDate={maxDate} />
+          <StateList set={setState} list={states} />
+          <br></br>
+          <button className='button' onClick={toggleViewHistory}><img className='img' src={toggleIcon} alt='view'></img></button>
+          {viewHistory && <History queue={historyQueue} addQueue={setQueue} />}
+        </div>
       </div>
   )
 }
