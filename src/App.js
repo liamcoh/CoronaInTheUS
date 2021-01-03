@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react"
 import StateList from './Components/StatesList'
 import History from './Components/HistoryList'
+import ClockBox from './Components/ClockBox'
 import DatePicker from "react-datepicker"
 import './App.css'
 const { max_history, green, red } = require('./config');
@@ -11,6 +12,8 @@ function App() {
   const [state, setState] = useState('TX')
   const [states, setStates] = useState([])
   const [historyQueue, setQueue] = useState([])
+  const [clock, setClock] = useState(new Date())
+  const [viewClock, setViewClock] = useState(false)
 
   const minDate = new Date(2020, 2, 6)
   var maxDate = new Date()
@@ -34,7 +37,7 @@ function App() {
     fetch(`https://api.covidtracking.com/v1/states/${state}/daily.json`)
         .then(response => response.json())
         .then(data => {
-          console.log(data)
+
           data.forEach(ele => {
             let strDate = ele.date.toString()
             if(parseInt(strDate.substring(0,4)) === date.getFullYear()){ // year
@@ -69,9 +72,24 @@ function App() {
         })
   }), [date, state]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setClock(new Date());
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    }
+  }, []);
+
+  useEffect(() => { document.body.style.backgroundColor = 'yellow' }, []) // Page color
+
 
   return (
-      <div>
+      <div dir='rtl'>
+        <div>
+          <button onClick={() => setViewClock(!viewClock)}>הצג שעה</button>
+          {viewClock && <ClockBox time={clock} />}
+        </div>
         <DatePicker selected={date} onChange={setDate} minDate={minDate} maxDate={maxDate} />
         <StateList set={setState} list={states} />
         <History queue={historyQueue} />

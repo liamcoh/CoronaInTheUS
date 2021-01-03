@@ -1,0 +1,19 @@
+.clockPanel {
+    direction: ltr;
+    position: absolute;
+    right: 10px;
+    top: 22px;
+    background-color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+}
+
+.timeFormat:hover {
+  color: lightskyblue;
+}
