@@ -5,7 +5,9 @@ import ClockBox from './Components/ClockBox'
 import DatePicker from "react-datepicker"
 import './App.css'
 import toggleIcon from './Assets/print-button.svg'
+import "react-datepicker/dist/react-datepicker.css";
 const { max_history, green, red } = require('./config');
+
 
 function App() {
 
@@ -43,7 +45,7 @@ function App() {
     }
   }, []);
 
-  useEffect(() => { document.body.style.backgroundColor = 'yellow' }, []) // Page color
+  useEffect(() => { document.body.style.backgroundColor = '#f1f1f1' }, []) // Page color
 
   function search() {
     fetch(`https://api.covidtracking.com/v1/states/${state}/daily.json`)
@@ -56,27 +58,25 @@ function App() {
               if(parseInt(strDate.substring(4,6)) === (date.getMonth()+1)){ // month
                 if(parseInt(strDate.substring(6,8)) === date.getUTCDate()){ // day
 
-                  setQueue(prev => {
-                    let tmp = [...prev]
-                    let color = 'green'
-                    let bold = 'normal'
-                    let prec = ele.positiveIncrease / (ele.positiveIncrease + ele.negativeIncrease)
-                    if(prec < green) color = 'green'
-                    else if (prec >= green && prec < red) color = 'orange'
-                    else { color = 'red'; bold = 'bold' }
-                    tmp.push({
-                      name: state.toString(),
-                      date: (date.getMonth()+1).toString() + '/' + date.getUTCDate().toString(),
-                      pos: ele.positiveIncrease,
-                      neg: ele.negativeIncrease,
-                      color: color,
-                      weight: bold
-                    })
-
-                    if(tmp.length > max_history) tmp.shift()
-
-                    return tmp
+                  let tmp = [...historyQueue]
+                  let color = 'green'
+                  let bold = 'normal'
+                  let prec = ele.positiveIncrease / (ele.positiveIncrease + ele.negativeIncrease)
+                  if(prec < green) color = 'green'
+                  else if (prec >= green && prec < red) color = 'orange'
+                  else { color = 'red'; bold = 'bold' }
+                  tmp.push({
+                    name: state.toString(),
+                    date: (date.getMonth()+1).toString() + '/' + date.getUTCDate().toString(),
+                    pos: ele.positiveIncrease,
+                    neg: ele.negativeIncrease,
+                    color: color,
+                    weight: bold
                   })
+
+                  if(tmp.length > max_history) tmp.shift()
+
+                  setQueue(tmp)
                 }
               }
             }
@@ -88,20 +88,48 @@ function App() {
     setViewHistory(!viewHistory)
   }
 
+  function toggleViewClock() {
+    setViewClock(!viewClock)
+  }
+
+
   return (
-      <div>
-        <div className='title'><h1>הקורונה במדינת ארה"ב</h1></div>
-        <div dir='rtl'>
-          <div>
-            <button onClick={() => setViewClock(!viewClock)}>הצג שעה</button>
+      <div dir='rtl'>
+        <div className='header'>
+          <h1>הקורונה במדינת ארה"ב</h1>
+          <p>מאגר נתונים עדכני לחיפוש</p>
+          <div className='navbar'>
+            <button className='button' onClick={toggleViewClock}>הצג שעה</button>
             {viewClock && <ClockBox time={clock} />}
           </div>
-          <div><button onClick={search}>חפש</button></div>
-          <DatePicker selected={date} onChange={setDate} minDate={minDate} maxDate={maxDate} />
-          <StateList set={setState} list={states} />
-          <br></br>
-          <button className='button' onClick={toggleViewHistory}><img className='img' src={toggleIcon} alt='view'></img></button>
-          {viewHistory && <History queue={historyQueue} addQueue={setQueue} />}
+        </div>
+
+        <div className='row'>
+          <div className='rightcolumn'>
+            <div className='card'>
+              <p style={{ textAlign: 'center', fontWeight: 'bold' }}>בחר תאריך ומדינה</p>
+              <div style ={{ padding: 0 }}><DatePicker
+                    dateFormat="dd/MM/yyyy"
+                    selected={date} 
+                    onChange={setDate} 
+                    minDate={minDate} 
+                    maxDate={maxDate}
+                    popperPlacement="left"
+                    showPopperArrow={false} />
+                  <StateList set={setState} list={states} />
+              </div>
+              <div style={{ textAlign: 'center' }}><button onClick={search}>חפש</button></div>
+              <div style={{ height: '20%', width: '20%' }}><button onClick={toggleViewHistory}>
+                <img className='img' src={toggleIcon} alt='view'></img>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className='leftcolumn'>
+            <div className='card'>
+              {viewHistory && <History queue={historyQueue} addQueue={setQueue} />}
+            </div>
+          </div>
         </div>
       </div>
   )
