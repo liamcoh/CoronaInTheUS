@@ -24,11 +24,11 @@
     padding: 2px 3px;
 }
 
-/*.row:after {
+.row:after {
     content: "";
     display: table;
     clear: both;
-}*/
+}
 
 .rightcolumn {
     float: right;
@@ -73,4 +73,21 @@
     cursor: pointer;
     width: 10%;
     height: 10%;
+}
+
+.flexBox {
+    display: flex;
+    text-align: right;
+    font-size: 16px;
+}
+
+.flexItem {
+    flex: 1;
+    border-left: 2px solid black;
+    margin-left: 25px;
+    padding-left: 25px;
+}
+
+.date-input-field {
+    max-width: 7rem;
 }

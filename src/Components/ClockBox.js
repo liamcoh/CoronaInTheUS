@@ -14,7 +14,7 @@ export default function ClockBox({time}) {
         <div className='clockPanel'>
             <div>שעה נוכחית</div>
             <hr style={{ padding: '0' }}></hr>
-            <div className='timeFormat' style={{   direction: 'ltr' }}>{timeFormat}</div>
+            <div className='timeFormat' style={{ direction: 'ltr' }}>{timeFormat}</div>
         </div>
     )
   }

@@ -3,14 +3,16 @@ import Header from './Components/Header'
 import StateList from './Components/StatesList'
 import History from './Components/HistoryList'
 import DatePicker from "react-datepicker"
-import './App.css'
 import toggleIcon from './Assets/print-button.svg'
 import "react-datepicker/dist/react-datepicker.css";
+import './App.css'
+
 const { max_history, green, red } = require('./config');
 
 
 function App() {
 
+  // States
   const [date, setDate] = useState(new Date(Date.now() - 86400000))
   const [state, setState] = useState('TX')
   const [states, setStates] = useState([])
@@ -19,24 +21,35 @@ function App() {
   const [clock, setClock] = useState(new Date())
   const [viewClock, setViewClock] = useState(false)
 
+  // Variables
   const minDate = new Date(2020, 2, 6)
   var maxDate = new Date()
+
+
+  // Run once:
+  // --------------------------------
 
   // Retrieve all the states from API
   useEffect(() => {
     fetch(`https://api.covidtracking.com/v1/states/info.json`)
         .then(response => response.json())
-        .then(data => {
-            let arr = [state] // set TX as first state
-            data.forEach(ele => {
+        .then(
+          (data) => {
+            let arr = [state] // Set TX as first state
+            data.forEach(ele => { // Retrieve all states
               arr.push(ele.state)
             });
             
-            arr.splice(arr.indexOf(state, 1), 1) // remove duplicate TX
+            arr.splice(arr.indexOf(state, 1), 1) // Remove duplicate TX
             setStates(arr)
 
-            search() // initial data row
-        })
+            search() // Initial data row
+          },
+          (error) => {
+            let arr = ['Failed to Fetch states']
+            setStates(arr)
+            console.log("Failed to fetch states names: " + error.toString())
+          })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Set interval per sec for clock
@@ -50,42 +63,74 @@ function App() {
   }, []);
 
   // Page bacground
-  useEffect(() => { document.body.style.backgroundColor = '#f1f1f1' }, [])
+  useEffect(() => { 
+    document.body.style.backgroundColor = '#f1f1f1' 
+  }, [])
+
+  // --------------------------------
+
+
 
   // Fetch data for State and Date
   function search() {
     fetch(`https://api.covidtracking.com/v1/states/${state}/daily.json`)
         .then(response => response.json())
-        .then(data => {
-          data.forEach(ele => {
-            let strDate = ele.date.toString()
-            if(parseInt(strDate.substring(0,4)) === date.getFullYear()){
-              if(parseInt(strDate.substring(4,6)) === (date.getMonth()+1)){
-                if(parseInt(strDate.substring(6,8)) === date.getUTCDate()){
-                  let tmp = [...historyQueue]
-                  let color = 'green'
-                  let bold = 'normal'
-                  let prec = ele.positiveIncrease / (ele.positiveIncrease + ele.negativeIncrease)
-                  if(prec < green) color = 'green'
-                  else if (prec >= green && prec < red) color = 'orange'
-                  else { color = 'red'; bold = 'bold' }
-                  
-                  tmp.push({
-                    name: state.toString(),
-                    date: (date.getMonth()+1).toString() + '/' + date.getUTCDate().toString(),
-                    pos: ele.positiveIncrease,
-                    neg: ele.negativeIncrease,
-                    color: color,
-                    weight: bold
-                  })
+        .then(
+          (data) => {
+            data.forEach(ele => {
+              let strDate = ele.date.toString()
 
-                  if(tmp.length > max_history) tmp.shift()
+              // Compare Dates
+              if(parseInt(strDate.substring(0,4)) === date.getFullYear()){
+                if(parseInt(strDate.substring(4,6)) === (date.getMonth()+1)){
+                  if(parseInt(strDate.substring(6,8)) === date.getUTCDate()){
 
-                  setQueue(tmp)
+                    let tmp = [...historyQueue]
+                    let color = 'green'
+                    let bold = 'normal'
+                    let prec = ele.positiveIncrease / (ele.positiveIncrease + ele.negativeIncrease)
+                    
+                    // Determine Danger Zone
+                    if (prec < green) 
+                      color = 'green'
+                    else if (prec >= green && prec < red) 
+                      color = 'orange'
+                    else { 
+                      color = 'red'; 
+                      bold = 'bold' 
+                    }
+                    
+                    tmp.push({
+                      name: state.toString(),
+                      date: (date.getMonth()+1).toString() + '/' + date.getUTCDate().toString(),
+                      pos: ele.positiveIncrease,
+                      neg: ele.negativeIncrease,
+                      color: color,
+                      weight: bold
+                    })
+
+                    if(tmp.length > max_history) tmp.shift()
+
+                    setQueue(tmp)
+                  }
                 }
               }
-            }
+            })
+          }
+        ).catch(error => {
+          let tmp = [...historyQueue]
+          tmp.push({
+            name: state.toString(),
+            date: (date.getMonth()+1).toString() + '/' + date.getUTCDate().toString(),
+            pos: 'Fetch Error',
+            neg: 'Fetch Error',
+            color: 'red',
+            weight: 'normal'
           })
+
+          if(tmp.length > max_history) tmp.shift()
+
+          setQueue(tmp)
         })
   }
 
@@ -113,6 +158,7 @@ function App() {
 
               <div style ={{ padding: 0 }}>
                 <DatePicker
+                    className='date-input-field'
                     dateFormat="dd/MM/yyyy"
                     selected={date} 
                     onChange={setDate} 
@@ -127,7 +173,7 @@ function App() {
                 textAlign: 'center' }}>
                   <button onClick={search}>חפש</button>
                   </div>
-                  
+
               <div style={{ 
                 height: '20%', 
                 width: '20%' }}>
