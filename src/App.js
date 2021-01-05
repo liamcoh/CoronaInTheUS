@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react"
+import Header from './Components/Header'
 import StateList from './Components/StatesList'
 import History from './Components/HistoryList'
-import ClockBox from './Components/ClockBox'
 import DatePicker from "react-datepicker"
 import './App.css'
 import toggleIcon from './Assets/print-button.svg'
@@ -11,7 +11,7 @@ const { max_history, green, red } = require('./config');
 
 function App() {
 
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState(new Date(Date.now() - 86400000))
   const [state, setState] = useState('TX')
   const [states, setStates] = useState([])
   const [historyQueue, setQueue] = useState([])
@@ -27,15 +27,19 @@ function App() {
     fetch(`https://api.covidtracking.com/v1/states/info.json`)
         .then(response => response.json())
         .then(data => {
-            let arr = []
+            let arr = [state] // set TX as first state
             data.forEach(ele => {
               arr.push(ele.state)
             });
-
+            
+            arr.splice(arr.indexOf(state, 1), 1) // remove duplicate TX
             setStates(arr)
+
+            search() // initial data row
         })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Set interval per sec for clock
   React.useEffect(() => {
     const timer = setInterval(() => {
       setClock(new Date());
@@ -45,19 +49,19 @@ function App() {
     }
   }, []);
 
-  useEffect(() => { document.body.style.backgroundColor = '#f1f1f1' }, []) // Page color
+  // Page bacground
+  useEffect(() => { document.body.style.backgroundColor = '#f1f1f1' }, [])
 
+  // Fetch data for State and Date
   function search() {
     fetch(`https://api.covidtracking.com/v1/states/${state}/daily.json`)
         .then(response => response.json())
         .then(data => {
-
           data.forEach(ele => {
             let strDate = ele.date.toString()
-            if(parseInt(strDate.substring(0,4)) === date.getFullYear()){ // year
-              if(parseInt(strDate.substring(4,6)) === (date.getMonth()+1)){ // month
-                if(parseInt(strDate.substring(6,8)) === date.getUTCDate()){ // day
-
+            if(parseInt(strDate.substring(0,4)) === date.getFullYear()){
+              if(parseInt(strDate.substring(4,6)) === (date.getMonth()+1)){
+                if(parseInt(strDate.substring(6,8)) === date.getUTCDate()){
                   let tmp = [...historyQueue]
                   let color = 'green'
                   let bold = 'normal'
@@ -65,6 +69,7 @@ function App() {
                   if(prec < green) color = 'green'
                   else if (prec >= green && prec < red) color = 'orange'
                   else { color = 'red'; bold = 'bold' }
+                  
                   tmp.push({
                     name: state.toString(),
                     date: (date.getMonth()+1).toString() + '/' + date.getUTCDate().toString(),
@@ -95,20 +100,19 @@ function App() {
 
   return (
       <div dir='rtl'>
-        <div className='header'>
-          <h1>הקורונה במדינת ארה"ב</h1>
-          <p>מאגר נתונים עדכני לחיפוש</p>
-          <div className='navbar'>
-            <button className='button' onClick={toggleViewClock}>הצג שעה</button>
-            {viewClock && <ClockBox time={clock} />}
-          </div>
-        </div>
+        <Header clock={clock} viewClock={viewClock} toggleViewClock={toggleViewClock} />
 
         <div className='row'>
           <div className='rightcolumn'>
             <div className='card'>
-              <p style={{ textAlign: 'center', fontWeight: 'bold' }}>בחר תאריך ומדינה</p>
-              <div style ={{ padding: 0 }}><DatePicker
+
+              <p style={{ 
+                textAlign: 'center', 
+                fontWeight: 'bold' }}>
+                  בחר תאריך ומדינה</p>
+
+              <div style ={{ padding: 0 }}>
+                <DatePicker
                     dateFormat="dd/MM/yyyy"
                     selected={date} 
                     onChange={setDate} 
@@ -116,21 +120,31 @@ function App() {
                     maxDate={maxDate}
                     popperPlacement="left"
                     showPopperArrow={false} />
-                  <StateList set={setState} list={states} />
+                <StateList set={setState} list={states} />
               </div>
-              <div style={{ textAlign: 'center' }}><button onClick={search}>חפש</button></div>
-              <div style={{ height: '20%', width: '20%' }}><button onClick={toggleViewHistory}>
+
+              <div style={{ 
+                textAlign: 'center' }}>
+                  <button onClick={search}>חפש</button>
+                  </div>
+                  
+              <div style={{ 
+                height: '20%', 
+                width: '20%' }}>
+                  <button onClick={toggleViewHistory}>
                 <img className='img' src={toggleIcon} alt='view'></img>
                 </button>
               </div>
             </div>
           </div>
+
           <div className='leftcolumn'>
             <div className='card'>
               {viewHistory && <History queue={historyQueue} addQueue={setQueue} />}
             </div>
           </div>
         </div>
+
       </div>
   )
 }

@@ -3,7 +3,7 @@ import '../App.css'
 import deleteIcon from '../Assets/delete-button.svg'
 const { v4: uuidv4 } = require('uuid');
 
-export default function History({queue, addQueue}) {
+export default React.memo(({queue, addQueue}) => {
     
     const items = []
 
@@ -17,14 +17,12 @@ export default function History({queue, addQueue}) {
         let key = uuidv4()
         items.push(<div
             key={key} 
-            style={{color: ele.color, fontWeight: ele.weight, textAlign: 'left', fontSize: '22px' }}>
-                <p>
-                    <span style = {{ borderRight: "2px solid black", width: '40px' , marginRight: '25px', paddingRight: '25px' }}>state:{ele.name}</span>
-                    <span style = {{ borderRight: "2px solid black", width: '40px' , marginRight: '25px', paddingRight: '25px' }}>date:{ele.date}</span>
-                    <span style = {{ borderRight: "2px solid black", width: '40px' , marginRight: '25px', paddingRight: '25px' }}>pos:{ele.pos}</span>
-                    <span>neg:{ele.neg}</span>
-                    <button style={{ width: '5%', height: '5%', float: 'right' }} className='button' onClick={() => removeLine(ele)}><img className='img' src={deleteIcon} alt='delete'></img></button>
-                </p>
+            style={{display: 'flex', color: ele.color, fontWeight: ele.weight, textAlign: 'right', fontSize: '16px' }}>
+                <div style={{ flex: '1',borderLeft: "2px solid black", marginLeft: '25px', paddingLeft: '25px'  }}>מדינה:{ele.name}</div>
+                <div style={{ flex: '1',borderLeft: "2px solid black", marginLeft: '25px', paddingLeft: '25px'  }}>תאריך:{ele.date}</div>
+                <div style={{ flex: '1',borderLeft: "2px solid black", marginLeft: '25px', paddingLeft: '25px'  }}>חיוביים:{ele.pos}</div>
+                <div style={{ flex: '1' }}>שליליים:{ele.neg}</div>
+                <button style={{ width: '5%', height: '5%', float: 'left' }} className='button' onClick={() => removeLine(ele)}><img className='img' src={deleteIcon} alt='delete'></img></button>
             </div>)})
 
     return (
@@ -32,4 +30,4 @@ export default function History({queue, addQueue}) {
             {items}
         </div>
     )
-  }
+  })

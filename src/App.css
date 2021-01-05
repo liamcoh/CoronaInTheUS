@@ -5,7 +5,6 @@
 }
 
 .header {
-    direction: rtl;
     text-align: center;
     position: sticky;
     background-color: grey;
@@ -25,11 +24,11 @@
     padding: 2px 3px;
 }
 
-.row:after {
+/*.row:after {
     content: "";
     display: table;
     clear: both;
-}
+}*/
 
 .rightcolumn {
     float: right;
@@ -51,7 +50,6 @@
 
 .clockPanel {
     position: absolute;
-    right: 10px;
     background-color: white;
     border-radius: 12px;
     padding: 20px;
@@ -67,7 +65,7 @@
 
 .img {
     max-width: 100%;
-    height: auto;
+    cursor: pointer;
 }
 
 .button {
