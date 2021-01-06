@@ -4,6 +4,7 @@ import History from './Components/HistoryList'
 import ClockBox from './Components/ClockBox'
 import DatePicker from "react-datepicker"
 import './App.css'
+import 'react-datepicker/dist/react-datepicker.css';
 const { max_history, green, red } = require('./config');
 
 function App() {
@@ -85,7 +86,7 @@ function App() {
 
 
   return (
-      <div dir='rtl'>
+      <div dir='rtl' style={{ textAlign: 'center' }}>
         <div>
           <button onClick={() => setViewClock(!viewClock)}>הצג שעה</button>
           {viewClock && <ClockBox time={clock} />}
