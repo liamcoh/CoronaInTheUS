@@ -3,16 +3,19 @@ import '../App.css'
 
 export default function ClockBox({time}) {
 
-    let timeFormat = ('0' + time.getDate()).slice(-2) + '.'
+    /*let timeFormat = ('0' + time.getDate()).slice(-2) + '.'
              + ('0' + (time.getMonth())).slice(-2) + '.'
              + time.getFullYear() + ' ' + 
              ('0' + time.getHours()).slice(-2) + ':' 
              + ('0' + time.getMinutes()).slice(-2) + ':' 
-             + ('0' + time.getSeconds()).slice(-2);
+             + ('0' + time.getSeconds()).slice(-2);*/
+
+    let timeFormat = time.getDate() + '.' + time.getMonth() + '.' + time.getFullYear() + ' ' + 
+            time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
 
     return (
         <div className='clockPanel'>
-            <div>שעה נוכחית</div>
+            <div style={{ padding: '5px' }}>שעה נוכחית</div>
             <hr style={{ padding: '0' }}></hr>
             <div className='timeFormat' style={{ direction: 'ltr' }}>{timeFormat}</div>
         </div>

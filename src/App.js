@@ -134,29 +134,23 @@ function App() {
         })
   }
 
-  function toggleViewHistory() {
-    setViewHistory(!viewHistory)
-  }
-
-  function toggleViewClock() {
-    setViewClock(!viewClock)
-  }
-
 
   return (
       <div dir='rtl'>
-        <Header clock={clock} viewClock={viewClock} toggleViewClock={toggleViewClock} />
+        <Header clock={clock} viewClock={viewClock} toggleViewClock={() => { setViewClock(!viewClock) }} />
 
         <div className='row'>
           <div className='rightcolumn'>
             <div className='card'>
 
-              <p style={{ 
+              <p style={{  
+                padding: '5px',
                 textAlign: 'center', 
                 fontWeight: 'bold' }}>
                   בחר תאריך ומדינה</p>
 
-              <div style ={{ padding: 0 }}>
+              <div style ={{ padding: '5px', textAlign: 'center' }}>
+                <div style ={{ padding: '5px' }}><StateList set={setState} list={states} /></div>
                 <DatePicker
                     className='date-input-field'
                     dateFormat="dd/MM/yyyy"
@@ -166,18 +160,19 @@ function App() {
                     maxDate={maxDate}
                     popperPlacement="left"
                     showPopperArrow={false} />
-                <StateList set={setState} list={states} />
               </div>
 
               <div style={{ 
+                padding: '5px',
                 textAlign: 'center' }}>
                   <button onClick={search}>חפש</button>
                   </div>
 
               <div style={{ 
+                padding: '5px',
                 height: '20%', 
                 width: '20%' }}>
-                  <button onClick={toggleViewHistory}>
+                  <button onClick={() => { setViewHistory(!viewHistory) }}>
                 <img className='img' src={toggleIcon} alt='view'></img>
                 </button>
               </div>
